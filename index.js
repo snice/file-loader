@@ -48,24 +48,31 @@ module.exports = function(content) {
 			outputPath = relativePath + url;
 		}
 		url = relativePath + url;
-	}
-	if (config.outputPath) {
+	} else if (config.outputPath) {
 		// support functions as outputPath to generate them dynamically
 		outputPath = (
 			typeof config.outputPath === "function"
 			? config.outputPath(url)
 			: config.outputPath + url
 		);
+		url = outputPath;
 	} else {
 		outputPath = url;
 	}
 
 	var publicPath = "__webpack_public_path__ + " + JSON.stringify(url);
 	if (config.publicPath !== undefined) {
+		// get current entry filepath
+		var findEntry = function( mod ) {
+			if (mod.reasons.length > 0 && mod.reasons[0].module.resource) {
+				return findEntry( mod.reasons[0].module )
+			}
+			return mod.resource
+		}
 		// support functions as publicPath to generate them dynamically
 		publicPath = JSON.stringify(
 			typeof config.publicPath === "function"
-			? config.publicPath(url)
+			? config.publicPath(url, findEntry(this._module))
 			: config.publicPath + url
 		);
 	}
