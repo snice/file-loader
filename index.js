@@ -48,14 +48,14 @@ module.exports = function(content) {
 			outputPath = relativePath + url;
 		}
 		url = relativePath + url;
-	} else if (config.outputPath) {
+	}
+	if (config.outputPath) {
 		// support functions as outputPath to generate them dynamically
 		outputPath = (
 			typeof config.outputPath === "function"
 			? config.outputPath(url)
 			: config.outputPath + url
 		);
-		url = outputPath;
 	} else {
 		outputPath = url;
 	}
